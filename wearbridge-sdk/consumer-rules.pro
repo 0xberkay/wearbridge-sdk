@@ -1,0 +1,2 @@
+-keep class com.zbd.wearbridge.protocol.** { *; }
+-keep class com.zbd.wearbridge.sdk.** { public *; }

@@ -1,0 +1,38 @@
+name: Release AAR
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build Release AAR & Sources
+      run: ./gradlew :wearbridge-sdk:assembleRelease :wearbridge-sdk:sdkSourcesJar
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          wearbridge-sdk/build/outputs/aar/wearbridge-sdk-release.aar
+          wearbridge-sdk/build/libs/wearbridge-sdk-sources.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
