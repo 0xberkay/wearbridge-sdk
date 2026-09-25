@@ -43,7 +43,7 @@ If publishing to Maven Central or `mavenLocal()`:
 
 ```kotlin
 dependencies {
-    implementation("com.zbd.wearbridge:wearbridge-sdk:1.0.0")
+    implementation("io.github.0xberkay:wearbridge-sdk:1.0.0")
 }
 ```
 

@@ -3,6 +3,6 @@ plugins {
 }
 
 allprojects {
-    group = "com.zbd.wearbridge"
+    group = "io.github.0xberkay"
     version = "1.0.0"
 }
