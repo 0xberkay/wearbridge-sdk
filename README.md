@@ -225,6 +225,28 @@ public class WatchBridgeHelper {
 
 ---
 
+## Wear OS Example Apps
+
+The [wear-bridge-examples repository](https://github.com/0xberkay/wear-bridge-examples)
+contains three standalone Wear OS apps built with SDK 1.1.0 and Compose for Wear OS
+Material 3. They share a round-screen layout with rotary-enabled scrolling and show
+the complete connection, permission, task execution, and result flow.
+
+| Example | Source | What it demonstrates |
+| --- | --- | --- |
+| **DPI Switcher** | [wear-dpi-switcher](https://github.com/0xberkay/wear-bridge-examples/tree/main/examples/wear-dpi-switcher) | Set 200/240/280/320 DPI or reset density through typed tasks and per-execution confirmation. |
+| **Custom Animator** | [wear-custom-animator](https://github.com/0xberkay/wear-bridge-examples/tree/main/examples/wear-custom-animator) | Set animation scales to off, 0.5×, 1×, or 2× with on-watch confirmation. |
+| **Perm List / Diagnostics** | [wear-perm-list](https://github.com/0xberkay/wear-bridge-examples/tree/main/examples/wear-perm-list) | Query bridge capabilities, diagnostics, and the fixed dumpsys output. Installed-app permission browsing is planned. |
+
+**[Download the signed example APKs — v0.1.0](https://github.com/0xberkay/wear-bridge-examples/releases/tag/v0.1.0)**
+
+Install an example on the watch, connect to WearBridge, and grant access. DPI and animator
+require an updated manager implementing the maintenance catalog and a running shell server;
+approve each change with **Allow once**. See the
+[examples README](https://github.com/0xberkay/wear-bridge-examples#readme) for build and installation instructions.
+
+---
+
 ## Available Tasks Catalog
 
 SDK 1.1.0 adds the typed maintenance catalog below. These tasks require an updated
@@ -326,6 +348,8 @@ The output AAR will be located at:
 - **Google Play:** [https://play.google.com/store/apps/details?id=com.zbd.wearbridge](https://play.google.com/store/apps/details?id=com.zbd.wearbridge)
 - **Maven Central:** [io.github.0xberkay:wearbridge-sdk](https://central.sonatype.com/artifact/io.github.0xberkay/wearbridge-sdk)
 - **GitHub Repository:** [0xberkay/wearbridge-sdk](https://github.com/0xberkay/wearbridge-sdk)
+- **Wear OS Examples:** [0xberkay/wear-bridge-examples](https://github.com/0xberkay/wear-bridge-examples)
+- **Example APKs:** [v0.1.0 release](https://github.com/0xberkay/wear-bridge-examples/releases/tag/v0.1.0)
 
 ---
 
