@@ -50,7 +50,7 @@ Maven Central is enabled by default in all Android projects. Simply add the depe
 
 ```kotlin
 dependencies {
-    implementation("io.github.0xberkay:wearbridge-sdk:1.0.0")
+    implementation("io.github.0xberkay:wearbridge-sdk:1.1.0")
 }
 ```
 
@@ -68,7 +68,7 @@ dependencyResolutionManagement {
 
 // build.gradle.kts
 dependencies {
-    implementation("com.github.0xberkay:wearbridge-sdk:1.0.0")
+    implementation("com.github.0xberkay:wearbridge-sdk:1.1.0")
 }
 ```
 
@@ -227,12 +227,51 @@ public class WatchBridgeHelper {
 
 ## Available Tasks Catalog
 
+SDK 1.1.0 adds the typed maintenance catalog below. These tasks require an updated
+WearBridge manager implementing this catalog; updating the client SDK alone does not
+add server capabilities. The GitHub release includes the AAR; Maven Central publication
+is handled separately by the maintainer.
+
 | Task ID Constant | Task String | Description | Requires Shell Server |
 | --- | --- | --- | --- |
 | `WearBridgeContract.TASK_PING` | `core.ping` | Health-check ping to the bridge service | Yes |
 | `WearBridgeContract.TASK_CAPABILITIES` | `core.capabilities` | Query supported features, version, and shell UID | No |
 | `WearBridgeContract.TASK_DIAGNOSTICS` | `core.diagnostics` | Read-only device & bridge diagnostic data | No |
 | `WearBridgeContract.TASK_DUMPSYS` | `adb.dumpsys` | Fixed dumpsys output under ADB shell identity | Yes |
+| `WearBridgeContract.TASK_DENSITY_GET` | `display.density.get` | Read display density | Yes |
+| `WearBridgeContract.TASK_DENSITY_SET` | `display.density.set` | Set `dpi` (120–640), requires confirmation | Yes |
+| `WearBridgeContract.TASK_DENSITY_RESET` | `display.density.reset` | Reset density, requires confirmation | Yes |
+| `WearBridgeContract.TASK_ANIM_GET` | `ui.anim.get` | Read animation scales | Yes |
+| `WearBridgeContract.TASK_ANIM_SET` | `ui.anim.set` | Set `scale` (0–10), requires confirmation | Yes |
+| `WearBridgeContract.TASK_WIFI_SET` | `net.wifi.set` | Set Wi-Fi `enabled`, requires confirmation | Yes |
+| `WearBridgeContract.TASK_BT_SET` | `net.bt.set` | Set Bluetooth `enabled`, requires confirmation | Yes |
+| `WearBridgeContract.TASK_AIRPLANE_SET` | `net.airplane.set` | Set airplane mode `enabled`, requires confirmation | Yes |
+| `WearBridgeContract.TASK_PRIVATEDNS_GET` | `net.privatedns.get` | Read private DNS settings | Yes |
+| `WearBridgeContract.TASK_PRIVATEDNS_SET` | `net.privatedns.set` | Set `mode` (off/automatic/hostname) and `hostname`, requires confirmation | Yes |
+| `WearBridgeContract.TASK_FIREWALL_SET` | `net.firewall.set` | Set package networking (`package`, `enabled`), requires confirmation | Yes |
+| `WearBridgeContract.TASK_FIREWALL_STATUS` | `net.firewall.status` | Read firewall chain status | Yes |
+| `WearBridgeContract.TASK_PERM_LIST` | `privacy.perm.list` | Read a capped package dump for `package` | Yes |
+| `WearBridgeContract.TASK_FORCE_STOP` | `apps.force.stop` | Force-stop `package`, requires confirmation | Yes |
+
+Call mutating tasks from a foreground app after obtaining permission. The manager queues
+confirmation and returns the non-terminal `APPROVAL_REQUIRED` status. SDK 1.1.0 opens the
+on-watch confirmation screen and retains the callback until the final result. Unanswered
+confirmations expire after 60 seconds in the updated manager.
+
+```kotlin
+val arguments = Bundle().apply {
+    putDouble(WearBridgeContract.ARG_SCALE, 2.0)
+}
+val request = TaskRequest.create(WearBridgeContract.TASK_ANIM_SET, arguments)
+WearBridge.execute(request) { result ->
+    Log.d("WearBridge", "Animation task: ${result.status}, ${result.message}")
+}
+```
+
+The single Maven artifact includes the protocol classes and AIDL interfaces; no separate
+`protocol` dependency is needed. Binder protocol version remains 2; the request SDK version
+is 2 for clients built with SDK 1.1.0. Older SDK clients can continue using the core tasks,
+but the updated manager requires SDK 1.1.0 for mutating tasks.
 
 ---
 
@@ -252,6 +291,7 @@ Task execution returns a `TaskResult` object containing an integer status code:
 | `TaskStatus.CAPABILITY_UNAVAILABLE`| `7` | Requested feature is unavailable on this device. |
 | `TaskStatus.USER_CANCELLED` | `8` | Operation was cancelled by the user. |
 | `TaskStatus.EXECUTION_FAILED` | `9` | Internal task execution failed. |
+| `TaskStatus.APPROVAL_REQUIRED` | `10` | Non-terminal confirmation signal, handled internally by SDK 1.1.0. |
 
 ---
 
@@ -266,7 +306,15 @@ Task execution returns a `TaskResult` object containing an integer status code:
 
 # Publish to Local Maven (~/.m2/repository)
 ./gradlew :wearbridge-sdk:publishToMavenLocal
+
+# Prepare the signed ZIP for manual Sonatype Central Portal upload
+# Requires signing.keyId/password/secretKeyRingFile in ~/.gradle/gradle.properties
+python3 tools/create-central-bundle.py 1.1.0
 ```
+
+Upload `wearbridge-sdk/build/distributions/wearbridge-sdk-1.1.0-bundle.zip`
+through the Central Portal. The ZIP includes `.module` Gradle metadata and its signature,
+as well as the AAR, POM, sources, javadoc, signatures, and checksums.
 
 The output AAR will be located at:
 `wearbridge-sdk/build/outputs/aar/wearbridge-sdk-release.aar`

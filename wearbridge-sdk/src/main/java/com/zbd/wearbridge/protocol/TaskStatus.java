@@ -11,6 +11,8 @@ public final class TaskStatus {
     public static final int CAPABILITY_UNAVAILABLE = 7;
     public static final int USER_CANCELLED = 8;
     public static final int EXECUTION_FAILED = 9;
+    /** Non-terminal result: the SDK must open the manager's confirmation screen. */
+    public static final int APPROVAL_REQUIRED = 10;
 
     private TaskStatus() {}
 }

@@ -25,14 +25,17 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build Release AAR & Sources
-      run: ./gradlew :wearbridge-sdk:assembleRelease :wearbridge-sdk:sdkSourcesJar
+    - name: Test and build release artifacts
+      run: ./gradlew test :wearbridge-sdk:assembleRelease :wearbridge-sdk:sdkSourcesJar :wearbridge-sdk:javadocJar
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
           wearbridge-sdk/build/outputs/aar/wearbridge-sdk-release.aar
-          wearbridge-sdk/build/libs/wearbridge-sdk-sources.jar
+          wearbridge-sdk/build/libs/wearbridge-sdk-1.1.0-sources.jar
+          wearbridge-sdk/build/libs/wearbridge-sdk-1.1.0-javadoc.jar
+        fail_on_unmatched_files: true
+        generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

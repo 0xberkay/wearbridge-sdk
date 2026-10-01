@@ -45,6 +45,21 @@ public final class WearBridge {
         }
 
         @Override public void onTaskResult(TaskResult result) {
+            if (result.getStatus() == TaskStatus.APPROVAL_REQUIRED) {
+                if (!taskCallbacks.containsKey(result.getRequestId())) return;
+                mainHandler.post(() -> {
+                    try {
+                        Intent intent = new Intent(WearBridgeContract.MUTATING_TASK_ACTION)
+                                .setComponent(new ComponentName(WearBridgeContract.MANAGER_PACKAGE,
+                                        WearBridgeContract.PERMISSION_ACTIVITY_CLASS))
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        appContext.startActivity(intent);
+                    } catch (RuntimeException exception) {
+                        // Confirmation remains available when the user opens the manager.
+                    }
+                });
+                return;
+            }
             TaskCallback taskCallback = taskCallbacks.remove(result.getRequestId());
             if (taskCallback != null) mainHandler.post(() -> taskCallback.onResult(result));
         }

@@ -43,7 +43,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "io.github.0xberkay"
                 artifactId = "wearbridge-sdk"
-                version = "1.0.0"
+                version = "1.1.0"
                 artifact(sdkSourcesJar)
                 artifact(javadocJar)
 
